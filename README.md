@@ -2,6 +2,9 @@
 
 DonateNow is a full-featured donation platform built to connect compassionate donors with verified NGOs and volunteers. The website allows users to make secure donations, track real-time impact, and explore urgent humanitarian needs. It also includes dedicated dashboards for users and admins to manage donations, monitor progress, and ensure transparency.
 
+# 📸 Preview of the website
+[App Demo](https://jaykishan1saharan.github.io/NGO-Donation-Platform/)
+
 # ✨ Key Features
 
 🌍 Hero Section highlighting total raised, lives impacted, and active donors <br>
