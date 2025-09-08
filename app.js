@@ -1,5 +1,5 @@
 // NGO Donation Platform - Enhanced with Organized Timeline
-(function() {
+(function () {
     'use strict';
 
     class DonationPlatform {
@@ -12,7 +12,7 @@
             this.selectedAmount = null;
             this.selectedPaymentMethod = null;
             this.selectedNeedId = null;
-            
+
             // Timeline data
             this.timelineData = [
                 {
@@ -31,7 +31,7 @@
                 },
                 {
                     year: "Mid 2025",
-                    title: "Growth Phase", 
+                    title: "Growth Phase",
                     description: "Expanded reach with advanced features and partnerships",
                     icon: "chart-line",
                     stats: "₹100K+ raised, 500+ lives impacted"
@@ -44,7 +44,7 @@
                     stats: "₹5M+ goal, 10,000+ lives to transform"
                 }
             ];
-            
+
             console.log('DonationPlatform constructor called');
             this.init();
         }
@@ -77,7 +77,7 @@
                     },
                     {
                         id: 2,
-                        name: "Sarah Wilson", 
+                        name: "Sarah Wilson",
                         email: "sarah@example.com",
                         phone: "+91-9876543211",
                         type: "volunteer",
@@ -105,7 +105,7 @@
                         userId: 2,
                         amount: 1500,
                         needId: 1,
-                        date: "2024-08-18", 
+                        date: "2024-08-18",
                         method: "card",
                         status: "completed"
                     }
@@ -130,7 +130,7 @@
                     {
                         id: 2,
                         name: "Sunrise Educational Trust",
-                        location: "Delhi, NCR", 
+                        location: "Delhi, NCR",
                         verified: true,
                         description: "Providing education to underprivileged children",
                         image: "https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=300&h=200&fit=crop",
@@ -181,7 +181,7 @@
                     if (entry.isIntersecting) {
                         const milestone = entry.target;
                         const index = milestone.dataset.index;
-                        
+
                         setTimeout(() => {
                             milestone.classList.add('animate');
                         }, index * 200); // Stagger animation
@@ -202,23 +202,23 @@
 
         bindAllEvents() {
             console.log('Binding events...');
-            
+
             // Auth buttons with null checks
             this.bindEvent('loginBtn', 'click', () => {
                 console.log('Login button clicked');
                 this.showModal('loginModal');
             });
-            
+
             this.bindEvent('registerBtn', 'click', () => {
                 console.log('Register button clicked');
                 this.showModal('registerModal');
             });
-            
+
             this.bindEvent('adminBtn', 'click', () => {
                 console.log('Admin button clicked');
                 this.showModal('adminModal');
             });
-            
+
             this.bindEvent('logoutBtn', 'click', () => {
                 console.log('Logout button clicked');
                 this.logout();
@@ -229,7 +229,7 @@
                 console.log('Donate Now button clicked');
                 this.showDonationModal();
             });
-            
+
             this.bindEvent('learnMoreBtn', 'click', () => {
                 console.log('Learn More button clicked');
                 this.showModal('learnMoreModal');
@@ -297,11 +297,11 @@
                     e.preventDefault();
                     const targetId = link.getAttribute('href').substring(1);
                     const targetElement = document.getElementById(targetId);
-                    
+
                     if (targetElement) {
                         const headerHeight = document.querySelector('.header').offsetHeight;
                         const targetPosition = targetElement.offsetTop - headerHeight - 20;
-                        
+
                         window.scrollTo({
                             top: targetPosition,
                             behavior: 'smooth'
@@ -367,7 +367,7 @@
 
             if (titleEl) titleEl.textContent = title;
             if (messageEl) messageEl.textContent = message;
-            
+
             if (okBtn) {
                 okBtn.onclick = () => {
                     this.hideModal('successModal');
@@ -388,7 +388,7 @@
 
             setTimeout(() => {
                 this.hideLoading();
-                
+
                 const user = this.users.find(u => u.email === email);
                 if (user && password) {
                     this.currentUser = user;
@@ -443,7 +443,7 @@
                     this.showModal('loginModal');
                     this.setElementValue('loginEmail', email);
                 });
-                
+
                 this.clearForm('registerForm');
             }, 1000);
         }
@@ -501,8 +501,8 @@
                 this.showDashboard();
                 this.updateRealTimeStats();
 
-                this.showSuccess(`${provider.charAt(0).toUpperCase() + provider.slice(1)} Login Success`, 
-                               `Welcome! You're now logged in with ${provider}.`);
+                this.showSuccess(`${provider.charAt(0).toUpperCase() + provider.slice(1)} Login Success`,
+                    `Welcome! You're now logged in with ${provider}.`);
             }, 1500);
         }
 
@@ -518,7 +518,7 @@
 
         showDonationModal(needId = null) {
             console.log('Showing donation modal for need:', needId);
-            
+
             if (!this.currentUser) {
                 this.showSuccess('Login Required', 'Please login to make a donation.', () => {
                     this.showModal('loginModal');
@@ -563,7 +563,7 @@
 
         processPayment() {
             console.log('Processing payment...');
-            
+
             const customAmount = this.getElementValue('customAmount');
             const amount = customAmount ? parseInt(customAmount) : this.selectedAmount;
 
@@ -610,10 +610,10 @@
                 this.updateRealTimeStats();
                 this.resetDonationForm();
 
-                this.showSuccess('Donation Successful!', 
+                this.showSuccess('Donation Successful!',
                     `Thank you for your donation of ₹${amount.toLocaleString()}! You're making a real difference.`, () => {
-                    if (this.currentUser) this.showDashboard();
-                });
+                        if (this.currentUser) this.showDashboard();
+                    });
 
                 this.showDonationAlert(this.currentUser.name, amount);
             }, 2000);
@@ -630,7 +630,7 @@
             if (!this.currentUser) return;
 
             this.hideDashboards();
-            
+
             const dashboard = document.getElementById('userDashboard');
             if (dashboard) {
                 dashboard.classList.remove('hidden');
@@ -650,7 +650,7 @@
             if (!this.isAdmin) return;
 
             this.hideDashboards();
-            
+
             const dashboard = document.getElementById('adminDashboard');
             if (dashboard) {
                 dashboard.classList.remove('hidden');
@@ -679,7 +679,7 @@
             if (activeBtn) activeBtn.classList.add('active');
             if (activeContent) activeContent.classList.add('active');
 
-            switch(tabId) {
+            switch (tabId) {
                 case 'users':
                     this.loadUsersTable();
                     break;
@@ -697,10 +697,10 @@
 
         updateAdminStats() {
             this.setElementText('adminTotalUsers', this.users.length);
-            
+
             const totalRaised = this.donations.reduce((sum, donation) => sum + donation.amount, 0);
             this.setElementText('adminTotalDonations', `₹${totalRaised.toLocaleString()}`);
-            
+
             this.setElementText('adminActiveNGOs', this.ngos.length);
         }
 
@@ -769,8 +769,8 @@
                     </thead>
                     <tbody>
                         ${this.donations.map(donation => {
-                            const user = this.users.find(u => u.id === donation.userId);
-                            return `
+                const user = this.users.find(u => u.id === donation.userId);
+                return `
                                 <tr>
                                     <td>${user ? user.name : 'Unknown'}</td>
                                     <td>₹${donation.amount.toLocaleString()}</td>
@@ -779,7 +779,7 @@
                                     <td><span class="status status--success">${donation.status}</span></td>
                                 </tr>
                             `;
-                        }).join('')}
+            }).join('')}
                     </tbody>
                 </table>
             `;
@@ -821,8 +821,8 @@
 
             const totalRaised = this.donations.reduce((sum, donation) => sum + donation.amount, 0);
             const avgDonation = this.donations.length ? totalRaised / this.donations.length : 0;
-            const topDonor = this.users.reduce((top, user) => 
-                (user.totalDonated || 0) > (top.totalDonated || 0) ? user : top, {totalDonated: 0});
+            const topDonor = this.users.reduce((top, user) =>
+                (user.totalDonated || 0) > (top.totalDonated || 0) ? user : top, { totalDonated: 0 });
 
             container.innerHTML = `
                 <div class="analytics-grid">
@@ -989,7 +989,7 @@
 
             container.innerHTML = urgentNeeds.map(need => {
                 const progressPercentage = Math.min((need.raisedAmount / need.targetAmount) * 100, 100);
-                
+
                 return `
                     <div class="need-card">
                         <div class="need-image" style="background-image: url('${need.image}')">
@@ -1179,4 +1179,73 @@
         initializePlatform();
     }
 
+    const backToTop = document.getElementById("backToTop");
+
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 300) {
+            backToTop.style.display = "block";
+        } else {
+            backToTop.style.display = "none";
+        }
+    });
+
+    backToTop.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+
+    function animateCounter(id, target) {
+        let count = 0;
+        const speed = target / 200; // adjust for speed
+        const el = document.getElementById(id);
+
+        const update = () => {
+            if (count < target) {
+                count += speed;
+                el.textContent = Math.floor(count).toLocaleString();
+                requestAnimationFrame(update);
+            } else {
+                el.textContent = target.toLocaleString();
+            }
+        };
+        update();
+    }
+
+    // Example usage (change numbers as needed)
+    animateCounter("peopleHelped", 15000);
+    animateCounter("activeUsers", 1200);
+
+    const alerts = document.getElementById("donationAlerts");
+
+    function showDonationAlert(name, amount, cause) {
+        const alert = document.createElement("div");
+        alert.className = "donation-alert";
+        alert.innerHTML = `<i class="fas fa-gift"></i> ${name} donated ₹${amount} for ${cause}`;
+
+        alerts.appendChild(alert);
+
+        setTimeout(() => {
+            alert.remove();
+        }, 4000);
+    }
+
+    // Fake random donations every few seconds
+    const donors = ["Anita", "Rahul", "Sneha", "Vikram", "Priya"];
+    const causes = ["Education", "Healthcare", "Food", "Shelter", "Environment"];
+
+    setInterval(() => {
+        const name = donors[Math.floor(Math.random() * donors.length)];
+        const cause = causes[Math.floor(Math.random() * causes.length)];
+        const amount = Math.floor(Math.random() * 5000) + 500;
+        showDonationAlert(name, amount, cause);
+    }, 6000);
+
+    const menuToggle = document.getElementById("menuToggle");
+    const navMenu = document.querySelector(".nav-menu");
+
+    menuToggle.addEventListener("click", () => {
+        navMenu.classList.toggle("active");
+    });
+
+    
 })();
