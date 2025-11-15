@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DonateNow - Transform Lives Through Giving</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-brand">
+                    <h2><i class="fas fa-heart"></i> DonateNow</h2>
+                </div>
+                <!-- Hamburger toggle (only visible on mobile) -->
+                <div class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#needs">Urgent Needs</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#impact">Impact</a></li>
+                    <li><a href="#journey">Our Journey</a></li>
+                    <li><a href="#partners">Partners</a></li>
+                </ul>
+                <div class="auth-buttons">
+                    <button class="btn btn--outline" id="loginBtn">Login</button>
+                    <button class="btn btn--primary" id="registerBtn">Register</button>
+                    <button class="btn btn--secondary hidden" id="logoutBtn">Logout</button>
+                    <button class="btn btn--outline" id="adminBtn">Admin</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">Transform Lives Through Your Generosity</h1>
+                    <p class="hero-description">Join thousands of compassionate individuals making a real difference.
+                        Every donation creates ripples of hope and change across communities.</p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalRaised">₹5.2M+</span>
+                            <span class="stat-label">Raised</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="peopleHelped">15,000+</span>
+                            <span class="stat-label">Lives Impacted</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="activeUsers">1,200+</span>
+                            <span class="stat-label">Active Donors</span>
+                        </div>
+                    </div>
+                    <div class="hero-actions">
+                        <button class="btn btn--primary btn--lg" id="donateNowBtn">Donate Now</button>
+                        <button class="btn btn--outline btn--lg" id="learnMoreBtn">Learn More</button>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="impact-circle">
+                        <div class="pulse-ring"></div>
+                        <div class="impact-content">
+                            <i class="fas fa-hands-helping"></i>
+                            <span>Real-time Impact</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real-time Donation Alerts -->
+    <div class="donation-alerts" id="donationAlerts"></div>
+
+    <!-- Urgent Needs Section -->
+    <section id="needs" class="needs-section">
+        <div class="container">
+            <h2 class="section-title">Critical Needs - Your Help Needed Now</h2>
+            <p class="section-subtitle">These urgent needs require immediate attention. Every contribution makes a
+                direct impact.</p>
+            <div class="needs-grid" id="needsGrid">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2 class="section-title">About Our Mission</h2>
+            <div class="about-content">
+                <div class="creator-info">
+                    <div class="creator-image">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="creator-details">
+                        <h3>Jaykishan Saharan</h3>
+                        <p class="creator-title">Founder & Creator</p>
+                        <p class="creator-story">A passionate developer and social activist committed to bridging the
+                            gap between donors and NGOs through technology. Driven by the belief that technology can
+                            solve humanitarian challenges.</p>
+                        <div class="contact-details">
+                            <p><i class="fas fa-envelope"></i> jaikishansaharan@gmail.com</p>
+                            <p><i class="fas fa-phone"></i> +91-9881900876</p>
+                            <div class="social-links">
+                                <a href="https://www.linkedin.com/in/jaikishan-saharan-a67485327" target="_blank"><i
+                                        class="fab fa-linkedin"></i></a>
+                                <a href="https://www.instagram.com/jaykishansaharan/" target="_blank"><i
+                                        class="fab fa-instagram"></i></a>
+                                <a href="https://github.com/jaykishan1saharan" target="_blank"><i
+                                        class="fab fa-github"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mission-vision">
+                    <div class="mission-item">
+                        <h4>Our Mission</h4>
+                        <p>To create a transparent, efficient platform that connects generous hearts with verified NGOs,
+                            ensuring every donation creates maximum impact.</p>
+                    </div>
+                    <div class="mission-item">
+                        <h4>Our Vision</h4>
+                        <p>A world where technology eliminates barriers between those who want to help and those who
+                            need help, creating sustainable positive change.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Section -->
+    <section id="impact" class="impact-section">
+        <div class="container">
+            <h2 class="section-title">Our Impact Story</h2>
+            <div class="impact-stats">
+                <div class="impact-card">
+                    <i class="fas fa-heart"></i>
+                    <h3>₹5.2M+</h3>
+                    <p>Total Donations</p>
+                </div>
+                <div class="impact-card">
+                    <i class="fas fa-users"></i>
+                    <h3>15,000+</h3>
+                    <p>Lives Transformed</p>
+                </div>
+                <div class="impact-card">
+                    <i class="fas fa-handshake"></i>
+                    <h3>250+</h3>
+                    <p>Partner NGOs</p>
+                </div>
+                <div class="impact-card">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <h3>45+</h3>
+                    <p>Cities Reached</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Journey Timeline Section -->
+    <section id="journey" class="journey-section">
+        <div class="container">
+            <div class="journey-header">
+                <h2 class="section-title">Our Journey</h2>
+                <p class="section-subtitle">From vision to impact - discover how we're transforming lives through
+                    technology and compassion</p>
+            </div>
+            <div class="timeline-container">
+                <div class="timeline-track"></div>
+                <div class="timeline-milestones" id="timelineMilestones">
+                    <!-- Timeline content will be dynamically loaded -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partners Section -->
+    <section id="partners" class="partners-section">
+        <div class="container">
+            <h2 class="section-title">Our Trusted NGO Partners</h2>
+            <p class="section-subtitle">We work with verified, transparent organizations committed to making a
+                difference</p>
+            <div class="partners-grid" id="partnersGrid">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div class="modal hidden" id="loginModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Welcome Back</h3>
+                <button class="modal-close" id="loginModalClose"><i class="fas fa-times"></i></button>
+            </div>
+            <form class="modal-form" id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn--primary btn--full-width">Login</button>
+                <div class="social-login">
+                    <p>Or continue with</p>
+                    <div class="social-buttons">
+                        <button type="button" class="btn-social" id="googleLogin"><i class="fab fa-google"></i>
+                            Google</button>
+                        <button type="button" class="btn-social" id="facebookLogin"><i class="fab fa-facebook"></i>
+                            Facebook</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal hidden" id="registerModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Join Our Community</h3>
+                <button class="modal-close" id="registerModalClose"><i class="fas fa-times"></i></button>
+            </div>
+            <form class="modal-form" id="registerForm">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="registerName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" class="form-control" id="registerPhone" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="registerPassword" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">User Type</label>
+                    <select class="form-control" id="registerUserType" required>
+                        <option value="donor">Donor</option>
+                        <option value="volunteer">Volunteer</option>
+                        <option value="ngo">NGO Representative</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn--primary btn--full-width">Create Account</button>
+                <div class="social-login">
+                    <p>Or continue with</p>
+                    <div class="social-buttons">
+                        <button type="button" class="btn-social" id="googleRegister"><i class="fab fa-google"></i>
+                            Google</button>
+                        <button type="button" class="btn-social" id="facebookRegister"><i class="fab fa-facebook"></i>
+                            Facebook</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal hidden" id="adminModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Admin Access</h3>
+                <button class="modal-close" id="adminModalClose"><i class="fas fa-times"></i></button>
+            </div>
+            <form class="modal-form" id="adminForm">
+                <div class="form-group">
+                    <label class="form-label">Admin Email</label>
+                    <input type="email" class="form-control" id="adminEmail" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Admin Password</label>
+                    <input type="password" class="form-control" id="adminPassword" required>
+                </div>
+                <button type="submit" class="btn btn--primary btn--full-width">Access Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Dashboard -->
+    <div class="dashboard hidden" id="userDashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2>Welcome back, <span id="userName"></span>!</h2>
+                <div class="dashboard-stats">
+                    <div class="dash-stat">
+                        <span class="dash-number" id="userDonations">0</span>
+                        <span class="dash-label">Donations Made</span>
+                    </div>
+                    <div class="dash-stat">
+                        <span class="dash-number" id="userImpact">0</span>
+                        <span class="dash-label">Lives Impacted</span>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-content">
+                <div class="dash-section">
+                    <h3>Your Recent Donations</h3>
+                    <div id="userDonationHistory"></div>
+                </div>
+                <div class="dash-section">
+                    <h3>Recommended for You</h3>
+                    <div id="recommendedNeeds"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div class="dashboard hidden" id="adminDashboard">
+        <div class="container">
+            <div class="admin-header">
+                <h2>Admin Dashboard</h2>
+                <div class="admin-stats">
+                    <div class="admin-stat">
+                        <span class="stat-number" id="adminTotalUsers">0</span>
+                        <span class="stat-label">Total Users</span>
+                    </div>
+                    <div class="admin-stat">
+                        <span class="stat-number" id="adminTotalDonations">₹0</span>
+                        <span class="stat-label">Total Raised</span>
+                    </div>
+                    <div class="admin-stat">
+                        <span class="stat-number" id="adminActiveNGOs">0</span>
+                        <span class="stat-label">Active NGOs</span>
+                    </div>
+                </div>
+            </div>
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="users">Users</button>
+                <button class="tab-btn" data-tab="donations">Donations</button>
+                <button class="tab-btn" data-tab="ngos">NGOs</button>
+                <button class="tab-btn" data-tab="analytics">Analytics</button>
+            </div>
+            <div class="admin-content">
+                <div class="tab-content active" id="usersTab">
+                    <h3>Registered Users</h3>
+                    <div id="usersTable"></div>
+                </div>
+                <div class="tab-content" id="donationsTab">
+                    <h3>Donation Records</h3>
+                    <div id="donationsTable"></div>
+                </div>
+                <div class="tab-content" id="ngosTab">
+                    <h3>NGO Partners</h3>
+                    <div id="ngosTable"></div>
+                </div>
+                <div class="tab-content" id="analyticsTab">
+                    <h3>Platform Analytics</h3>
+                    <div id="analyticsContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donation Modal -->
+    <div class="modal hidden" id="donationModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content donation-modal">
+            <div class="modal-header">
+                <h3>Make a Donation</h3>
+                <button class="modal-close" id="donationModalClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="donation-form">
+                <div class="donation-amounts">
+                    <button class="amount-btn" data-amount="500">₹500</button>
+                    <button class="amount-btn" data-amount="1000">₹1,000</button>
+                    <button class="amount-btn" data-amount="2000">₹2,000</button>
+                    <button class="amount-btn" data-amount="5000">₹5,000</button>
+                    <input type="number" class="form-control" id="customAmount" placeholder="Custom amount">
+                </div>
+                <div class="payment-methods">
+                    <h4>Select Payment Method</h4>
+                    <div class="payment-options">
+                        <button class="payment-btn" data-method="upi"><i class="fas fa-mobile-alt"></i> UPI</button>
+                        <button class="payment-btn" data-method="netbanking"><i class="fas fa-university"></i> Net
+                            Banking</button>
+                        <button class="payment-btn" data-method="card"><i class="fas fa-credit-card"></i> Card</button>
+                    </div>
+                </div>
+                <button class="btn btn--primary btn--full-width" id="proceedPayment">Proceed to Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal hidden" id="successModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content success-modal">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 id="successTitle">Success!</h3>
+            <p id="successMessage">Your action has been completed successfully.</p>
+            <button class="btn btn--primary" id="successOk">OK</button>
+        </div>
+    </div>
+
+    <!-- Learn More Modal -->
+    <div class="modal hidden" id="learnMoreModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content learn-more-modal">
+            <div class="modal-header">
+                <h3>Our Platform Goals & Achievements</h3>
+                <button class="modal-close" id="learnMoreModalClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="learn-more-content">
+                <div class="goal-section">
+                    <h4>Our Goals</h4>
+                    <ul>
+                        <li>Connect 1 million donors with verified NGOs by 2030</li>
+                        <li>Facilitate ₹100 crores in transparent donations</li>
+                        <li>Create sustainable impact measurement systems</li>
+                        <li>Bridge the digital divide in charitable giving</li>
+                    </ul>
+                </div>
+                <div class="achievements-section">
+                    <h4>Historic Achievements</h4>
+                    <div class="achievement-cards">
+                        <div class="achievement-card">
+                            <h5>2020</h5>
+                            <p>Platform launched with 10 NGO partners</p>
+                        </div>
+                        <div class="achievement-card">
+                            <h5>2021</h5>
+                            <p>Reached ₹1M milestone, 5,000 lives impacted</p>
+                        </div>
+                        <div class="achievement-card">
+                            <h5>2022</h5>
+                            <p>Expanded to 25 cities, 100+ NGO partners</p>
+                        </div>
+                        <div class="achievement-card">
+                            <h5>2023</h5>
+                            <p>₹3M raised, launched volunteer program</p>
+                        </div>
+                        <div class="achievement-card">
+                            <h5>2024</h5>
+                            <p>AI-powered impact tracking implemented</p>
+                        </div>
+                        <div class="achievement-card">
+                            <h5>2025</h5>
+                            <p>₹5.2M+ raised, 250+ NGO partners</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="transparency-section">
+                    <h4>How Your Donations Are Used</h4>
+                    <div class="fund-allocation">
+                        <div class="allocation-item">
+                            <span class="percentage">85%</span>
+                            <span class="description">Direct to beneficiaries</span>
+                        </div>
+                        <div class="allocation-item">
+                            <span class="percentage">10%</span>
+                            <span class="description">NGO operational costs</span>
+                        </div>
+                        <div class="allocation-item">
+                            <span class="percentage">5%</span>
+                            <span class="description">Platform maintenance</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Processing...</p>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop"><i class="fas fa-arrow-up"></i></button>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
