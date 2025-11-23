@@ -28,6 +28,8 @@
                     <li><a href="#impact">Impact</a></li>
                     <li><a href="#journey">Our Journey</a></li>
                     <li><a href="#partners">Partners</a></li>
+                    <li><a href="#" id="ngoBtn">NGOs</a></li>
+
                 </ul>
                 <div class="auth-buttons">
                     <button class="btn btn--outline" id="loginBtn">Login</button>
@@ -299,6 +301,42 @@
         </div>
     </div>
 
+    <!-- NGO Login Modal -->
+    <div class="modal hidden" id="ngoModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>NGO Access</h3>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+
+            <form class="modal-form" id="ngoForm">
+                <div class="form-group">
+                    <label class="form-label">NGO Name</label>
+                    <input type="text" id="ngoName" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" id="ngoLocation" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea id="ngoDescription" class="form-control" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Image URL</label>
+                    <input type="text" id="ngoImage" class="form-control" required>
+                </div>
+
+                <button type="submit" class="btn btn--primary btn--full-width">Add NGO</button>
+            </form>
+        </div>
+    </div>
+
+
     <!-- User Dashboard -->
     <div class="dashboard hidden" id="userDashboard">
         <div class="container">
@@ -353,6 +391,8 @@
                 <button class="tab-btn" data-tab="donations">Donations</button>
                 <button class="tab-btn" data-tab="ngos">NGOs</button>
                 <button class="tab-btn" data-tab="analytics">Analytics</button>
+                <button class="tab-btn" data-tab="ngoRequests">NGO Requests</button>
+
             </div>
             <div class="admin-content">
                 <div class="tab-content active" id="usersTab">
@@ -367,6 +407,11 @@
                     <h3>NGO Partners</h3>
                     <div id="ngosTable"></div>
                 </div>
+                <div class="tab-content" id="ngoRequestsTab">
+                    <h3>Pending NGO Requests</h3>
+                    <div id="ngoRequestsTable">No requests yet.</div>
+                </div>
+
                 <div class="tab-content" id="analyticsTab">
                     <h3>Platform Analytics</h3>
                     <div id="analyticsContent"></div>
@@ -374,6 +419,60 @@
             </div>
         </div>
     </div>
+
+    <!-- NGO Dashboard -->
+    <div class="dashboard hidden" id="ngoDashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2 id="ngoDashboardTitle">NGO Dashboard</h2>
+                <div class="dashboard-stats">
+                    <div class="dash-stat">
+                        <span class="dash-number" id="ngoTotalCampaigns">0</span>
+                        <span class="dash-label">Active Campaigns</span>
+                    </div>
+                    <div class="dash-stat">
+                        <span class="dash-number" id="ngoTotalDonations">₹0</span>
+                        <span class="dash-label">Total Raised</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <div class="dash-section">
+                    <h3>Create Campaign (Need)</h3>
+                    <form id="createCampaignForm" class="modal-form">
+                        <div class="form-group">
+                            <label class="form-label">Campaign Title</label>
+                            <input type="text" id="campaignTitle" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea id="campaignDescription" class="form-control" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Goal Amount (₹)</label>
+                            <input type="number" id="campaignGoal" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Upload Image</label>
+                            <input type="file" id="campaignImageFile" class="form-control">
+                        </div>
+
+                        <button class="btn btn--primary" type="submit">Create Campaign</button>
+                    </form>
+                </div>
+
+                <div class="dash-section">
+                    <h3>Your Campaigns</h3>
+                    <div id="ngoCampaignList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Donation Modal -->
     <div class="modal hidden" id="donationModal">
@@ -500,8 +599,9 @@
     <!-- Firebase (compat) - add these before app.js -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <!-- optionally Firestore later: firebase-firestore-compat.js -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
     <script src="app.js"></script>
+
 
 
 </body>

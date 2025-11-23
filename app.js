@@ -12,6 +12,9 @@
             this.users = JSON.parse(localStorage.getItem('platform_users') || '[]');
             this.donations = JSON.parse(localStorage.getItem('platform_donations') || '[]');
             this.ngos = JSON.parse(localStorage.getItem('platform_ngos') || '[]');
+            this.ngoRequests = JSON.parse(localStorage.getItem('platform_ngo_requests') || '[]');
+            this.campaigns = JSON.parse(localStorage.getItem('platform_campaigns') || '[]');
+
 
             // Donation modal selections
             this.selectedAmount = null;
@@ -61,10 +64,17 @@
         }
 
         loadNeedsGrid() {
-            const container = document.getElementById('needsGrid');
-            if (!container) return;
+            const dynamicCampaigns = this.campaigns.map(c => ({
+                id: c.id,
+                title: c.title,
+                priority: "High",
+                description: c.description,
+                amountRequired: c.goal,
+                amountRaised: c.raised,
+                image: c.image
+            }));
 
-            const urgentNeeds = [
+            const staticNeeds = [
                 {
                     id: 1,
                     title: "Emergency Winter Clothing for 100 Children",
@@ -84,6 +94,12 @@
                     image: "https://images.unsplash.com/photo-1509062522246-3755977927d7"
                 }
             ];
+
+            // Combine dynamic campaigns with static needs
+            const urgentNeeds = [...dynamicCampaigns, ...staticNeeds];
+
+            const container = document.getElementById('needsGrid');
+            if (!container) return;
 
             container.innerHTML = urgentNeeds.map(need => `
         <div class="need-card">
@@ -158,7 +174,8 @@
         }
 
         setupAuthStateListener() {
-            if (!this.auth) return;
+            // Show correct dashboard after login
+
 
             // Listen for changes in auth state and update UI accordingly.
             this.auth.onAuthStateChanged((user) => {
@@ -186,7 +203,22 @@
                     this.saveSession();
                     this.updateAuthUI();
                     // Show user dashboard (unless admin)
-                    if (!this.isAdmin) this.showDashboard();
+                    if (!this.isAdmin) {
+                        if (this.currentUser && this.currentUser.type === "ngo") {
+                            if (this.currentUser.approved) {
+                                this.showNGODashboard();
+                            }
+                            else {
+                                this.showSuccess(
+                                    "Pending Approval",
+                                    "Your NGO account is pending admin approval."
+                                );
+                            }
+                        }
+                        else {
+                            this.showDashboard();
+                        }
+                    }
                 } else {
                     // logged out
                     this.currentUser = null;
@@ -197,6 +229,28 @@
                 }
             });
         }
+
+        uploadFileToFirebase(file, path) {
+            return new Promise((resolve, reject) => {
+                if (!window.firebase || !firebase.storage) {
+                    return reject(new Error('Firebase Storage not loaded.'));
+                }
+                const storageRef = firebase.storage().ref();
+                // Sanitize filename - remove special characters
+                const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+                const fileRef = storageRef.child(`${path}_${safeName}`);
+                const uploadTask = fileRef.put(file);
+
+                uploadTask.on('state_changed', null, (error) => {
+                    reject(error);
+                }, () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        resolve(downloadURL);
+                    }).catch(reject);
+                });
+            });
+        }
+
 
         // ---------------- Initial static data ----------------
         loadInitialData() {
@@ -279,6 +333,11 @@
             this.bindEvent('googleRegister', 'click', () => this.handleGoogleLogin());
             this.bindEvent('successOk', 'click', () => this.hideModal('successModal'));
             this.bindEvent('proceedPayment', 'click', () => this.processPayment());
+            this.bindEvent('ngoBtn', 'click', () => this.showModal('ngoModal'));
+            this.bindEvent('ngoForm', 'submit', (e) => this.addNGO(e));
+            this.bindEvent('createCampaignForm', 'submit', (e) => this.handleCreateCampaign(e));
+
+
 
             // Modal close & overlay clicks
             document.querySelectorAll('.modal-close').forEach(btn => btn.addEventListener('click', (e) => {
@@ -406,19 +465,46 @@
                     };
 
                     // Save to local users list for platform features (you can later migrate to Firestore)
+                    // Save user to users list
                     this.users.push(newUser);
                     this.saveToStorage('platform_users', this.users);
 
-                    this.hideModal('registerModal');
-                    this.showSuccess('Registration successful', 'Please login with your new account.', () => {
-                        this.showModal('loginModal');
-                        this.setElementValue('loginEmail', email);
-                    });
+                    // If the registering user is an NGO, create a pending NGO request
+                    if (userType === 'ngo') {
+                        const request = {
+                            id: Date.now(),
+                            userId: newUser.id,
+                            name: newUser.name,
+                            email: newUser.email,
+                            phone: newUser.phone,
+                            location: '', // NGO can later add details in NGO dashboard/profile
+                            description: '',
+                            image: '',
+                            verified: false,
+                            createdAt: new Date().toISOString(),
+                            status: 'pending',
+                            established: new Date().getFullYear(),  // ← ADD THIS
+                            beneficiaries: 0  // ← ADD THIS
+                        };
+                        this.ngoRequests.push(request);
+                        this.saveToStorage('platform_ngo_requests', this.ngoRequests);
+
+                        this.hideModal('registerModal');
+                        this.showSuccess('Registration received', 'Your NGO registration is received and will be reviewed by admin.');
+                        // keep them logged out until admin approves (or you can allow limited access)
+                    } else {
+                        // non-NGO flow: (existing behavior)
+                        this.hideModal('registerModal');
+                        this.showSuccess('Registration successful', 'Please login with your new account.', () => {
+                            this.showModal('loginModal');
+                            this.setElementValue('loginEmail', email);
+                        });
+                    }
                     this.clearForm('registerForm');
                 })
                 .catch(err => {
                     this.hideLoading();
-                    console.error('Register error', err);
+                    console.error('Registration error', err);
                     alert(err.message || 'Registration failed');
                 });
         }
@@ -493,6 +579,7 @@
                 return;
             }
             this.selectedNeedId = needId;
+            this.resetDonationForm();  // ← ADD THIS
             this.showModal('donationModal');
             this.setupDonationModal();
         }
@@ -604,11 +691,120 @@
             }
         }
 
+        showNGODashboard() {
+            if (!this.currentUser) {
+                console.warn('No current user');
+                return;
+            }
+            if (this.currentUser.type !== 'ngo') {
+                alert('Access denied: Not an NGO user');
+                return;
+            }
+            if (!this.currentUser.approved) {
+                this.showSuccess('Pending Approval', 'Your NGO account is not approved by admin yet.');
+                return;
+            }
+
+            this.hideDashboards();
+            const nd = document.getElementById('ngoDashboard');
+            if (nd) {
+                nd.classList.remove('hidden');
+                this.loadNGOCampaigns();
+                this.setElementText('ngoDashboardTitle', `NGO Dashboard — ${this.currentUser.name}`);
+            }
+        }
+
+        loadNGOCampaigns() {
+            const container = document.getElementById('ngoCampaignList');
+            if (!container || !this.currentUser) return;
+            const myCampaigns = this.campaigns.filter(c => String(c.ownerId) === String(this.currentUser.id));
+            if (!myCampaigns.length) { container.innerHTML = '<p>No campaigns yet.</p>'; return; }
+            container.innerHTML = myCampaigns.map(c => `
+      <div class="need-card">
+        <div class="need-image" style="background-image:url('${c.image}')"></div>
+        <div class="need-content">
+          <h3>${c.title}</h3>
+          <p>${c.description}</p>
+          <div class="need-progress">
+            <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100, (c.raised / c.goal) * 100)}%"></div></div>
+          </div>
+          <p>Raised: ₹${(c.raised || 0).toLocaleString()} / ₹${c.goal.toLocaleString()}</p>
+        </div>
+      </div>
+    `).join('');
+            this.setElementText('ngoTotalCampaigns', myCampaigns.length);
+            const totalRaised = myCampaigns.reduce((s, c) => s + (c.raised || 0), 0);
+            this.setElementText('ngoTotalDonations', `₹${totalRaised.toLocaleString()}`);
+        }
+
+        async handleCreateCampaign(e) {
+            e.preventDefault();
+            if (!this.currentUser) {
+                this.showSuccess('Login required', 'Please login to create campaign.');
+                return;
+            }
+
+            const title = this.getElementValue('campaignTitle').trim();
+            const description = this.getElementValue('campaignDescription').trim();
+            const goal = Number(this.getElementValue('campaignGoal') || 0);
+
+            // ← ADD VALIDATION
+            if (!title || title.length < 5) {
+                alert('Campaign title required (min 5 characters)');
+                return;
+            }
+            if (!description || description.length < 10) {
+                alert('Campaign description required (min 10 characters)');
+                return;
+            }
+            if (goal < 1000) {
+                alert('Goal must be at least ₹1000');
+                return;
+            }
+
+            const fileInput = document.getElementById('campaignImageFile');
+            let imageUrl = 'https://via.placeholder.com/600x400';
+
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+                try {
+                    imageUrl = await this.uploadFileToFirebase(
+                        fileInput.files[0],
+                        `campaigns/${this.currentUser.id}_${Date.now()}`
+                    );
+                } catch (err) {
+                    console.error('Image upload failed', err);
+                    this.showSuccess('Upload failed', 'Could not upload image. Campaign will use default image.');
+                }
+            }
+
+            const campaign = {
+                id: Date.now(),
+                ownerId: this.currentUser.id,
+                title,
+                description,
+                goal,
+                raised: 0,
+                image: imageUrl,
+                createdAt: new Date().toISOString(),
+                status: 'active'
+            };
+            this.campaigns.push(campaign);
+            this.saveToStorage('platform_campaigns', this.campaigns);
+
+            this.loadDynamicContent();
+            this.loadNGOCampaigns();
+            this.showSuccess('Campaign Created', 'Your campaign has been created successfully.');
+            this.clearForm('createCampaignForm');
+        }
+
+
         hideDashboards() {
             const ud = document.getElementById('userDashboard');
             const ad = document.getElementById('adminDashboard');
+            const nd = document.getElementById('ngoDashboard');  // ← ADD THIS
             if (ud) ud.classList.add('hidden');
             if (ad) ad.classList.add('hidden');
+            if (nd) nd.classList.add('hidden');  // ← ADD THIS
         }
 
         updateAdminStats() {
@@ -638,6 +834,8 @@
             if (tabId === 'donations') this.loadDonationsTable();
             if (tabId === 'ngos') this.loadNGOsTable();
             if (tabId === 'analytics') this.loadAnalytics();
+            if (tabId === 'ngoRequests') this.loadNGORequestsTable();
+
         }
 
         loadUsersTable() {
@@ -666,6 +864,74 @@
             container.innerHTML = `<table class="data-table"><thead><tr><th>Name</th><th>Location</th><th>Verified</th><th>Beneficiaries</th><th>Established</th></tr></thead><tbody>${this.ngos.map(n => `<tr><td>${n.name}</td><td>${n.location}</td><td>${n.verified ? 'Verified' : 'Pending'}</td><td>${n.beneficiaries}</td><td>${n.established}</td></tr>`).join('')
                 }</tbody></table>`;
         }
+
+        loadNGORequestsTable() {
+            const container = document.getElementById('ngoRequestsTable');
+            if (!container) return;
+            if (!this.ngoRequests.length) { container.innerHTML = '<p>No pending NGO requests.</p>'; return; }
+            container.innerHTML = `<table class="data-table"><thead><tr><th>Name</th><th>Email</th><th>Submitted</th><th>Action</th></tr></thead><tbody>${this.ngoRequests.map(r => `<tr data-id="${r.id}"><td>${r.name}</td><td>${r.email}</td><td>${new Date(r.createdAt).toLocaleDateString()}</td><td><button class="btn btn--primary btn-sm approve-btn" data-id="${r.id}">Approve</button> <button class="btn btn--outline btn-sm reject-btn" data-id="${r.id}">Reject</button></td></tr>`).join('')}</tbody></table>`;
+
+            // attach handlers
+            container.querySelectorAll('.approve-btn').forEach(btn => btn.addEventListener('click', (e) => {
+                const id = e.currentTarget.dataset.id;
+                this.approveNGORequest(Number(id));
+            }));
+            container.querySelectorAll('.reject-btn').forEach(btn => btn.addEventListener('click', (e) => {
+                const id = e.currentTarget.dataset.id;
+                this.rejectNGORequest(Number(id));
+            }));
+        }
+
+        approveNGORequest(requestId) {
+            const idx = this.ngoRequests.findIndex(r => r.id === requestId);
+            if (idx === -1) return;
+            const req = this.ngoRequests[idx];
+
+            // create NGO in platform_ngos
+            const ngo = {
+                id: Date.now(),
+                userId: req.userId,
+                name: req.name,
+                location: req.location || 'Unknown',
+                verified: true,
+                description: req.description || '',
+                image: req.image || 'https://via.placeholder.com/300x200',
+                needs: 0,
+                totalSupported: 0,
+                established: req.established || new Date().getFullYear(),
+                beneficiaries: req.beneficiaries || 0
+            };
+            this.ngos.push(ngo);
+            this.saveToStorage('platform_ngos', this.ngos);
+
+            // update user type to ngo (already set at register) and optionally mark user as approved
+            const user = this.users.find(u => String(u.id) === String(req.userId));
+            if (user) { user.approved = true; this.saveToStorage('platform_users', this.users); }
+
+            // remove request
+            this.ngoRequests.splice(idx, 1);
+            this.saveToStorage('platform_ngo_requests', this.ngoRequests);
+
+            this.loadPartnersGrid();
+            this.loadNGORequestsTable();
+            this.loadNGOsTable(); // admin table refresh
+            this.showSuccess('NGO Approved', `${ngo.name} is now an approved partner.`);
+        }
+
+        rejectNGORequest(requestId) {
+            const idx = this.ngoRequests.findIndex(r => r.id === requestId);
+            if (idx === -1) return;
+            const req = this.ngoRequests[idx];
+
+            // remove request
+            this.ngoRequests.splice(idx, 1);
+            this.saveToStorage('platform_ngo_requests', this.ngoRequests);
+
+            // optionally notify - keep it simple
+            this.loadNGORequestsTable();
+            this.showSuccess('Request Rejected', `NGO request from ${req.name} was rejected.`);
+        }
+
 
         loadAnalytics() {
             const container = document.getElementById('analyticsContent');
@@ -740,6 +1006,10 @@
             const el = document.getElementById(id);
             if (el) el.textContent = text;
         }
+        getElementText(id) {
+            const el = document.getElementById(id);
+            return el ? el.textContent.trim() : '';
+        }
         clearForm(formId) {
             const f = document.getElementById(formId);
             if (f) f.reset();
@@ -789,12 +1059,43 @@
             this.setElementText('peopleHelped', peopleHelped.toLocaleString());
             this.setElementText('activeUsers', activeUsers.toLocaleString());
         }
+
+        addNGO(e) {
+            e.preventDefault();
+
+            const newNGO = {
+                id: Date.now(),
+                name: document.getElementById('ngoName').value,
+                location: document.getElementById('ngoLocation').value,
+                description: document.getElementById('ngoDescription').value,
+                image: document.getElementById('ngoImage').value,
+                verified: false,
+                needs: 0,
+                beneficiaries: 0,
+                totalSupported: 0,
+                established: new Date().getFullYear()
+            };
+
+            this.ngos.push(newNGO);
+            this.saveToStorage('platform_ngos', this.ngos);
+
+            this.hideModal('ngoModal');
+            this.loadPartnersGrid();
+            this.clearForm('ngoForm');  // ← ADD THIS
+            this.showSuccess('NGO Added', 'Your NGO has been submitted successfully!');
+        }
+
     }
 
     // Initialize platform when DOM is ready
     function initializePlatform() {
         console.log('DOM ready, initializing platform.');
         window.donationPlatform = new DonationPlatform();
+
+        // Animate counters after platform init
+        setTimeout(() => {
+        }, 500);
+        
     }
 
     if (document.readyState === 'loading') {
@@ -815,7 +1116,10 @@
     // animate counters (simple)
     function animateCounter(id, target) {
         const el = document.getElementById(id);
-        if (!el) return;
+        if (!el) {
+            console.warn(`Element with id '${id}' not found for counter animation`);
+            return;
+        }
         let count = 0;
         const step = Math.max(1, Math.floor(target / 200));
         const tick = () => {
